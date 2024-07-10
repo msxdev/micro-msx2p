@@ -561,6 +561,20 @@ int main(int argc, char* argv[])
                             log("Reset micro-msx2p");
                             msx2.reset();
                             break;
+                        case SDLK_d: {
+                            log("Dump ram.bin and vram.bin");
+                            FILE* fp = fopen("ram.bin", "wb");
+                            if (fp) {
+                                fwrite(&msx2.mmu->ram[0xC000], 1, 16384, fp);
+                                fclose(fp);
+                            }
+                            fp = fopen("vram.bin", "wb");
+                            if (fp) {
+                                fwrite(&msx2.vdp->ctx.ram, 1, 16384, fp);
+                                fclose(fp);
+                            }
+                            break;
+                        }
                     }
                 } else {
                     auto it = keyMap.find(event.key.keysym.sym);
