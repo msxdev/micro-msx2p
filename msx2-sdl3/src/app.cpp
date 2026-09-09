@@ -25,7 +25,7 @@
  * -----------------------------------------------------------------------------
  */
 #include "BufferQueue.h"
-#include "SDL.h"
+#include "SDL3/SDL.h"
 #include "msx2.hpp"
 #include <chrono>
 #include <map>
@@ -488,6 +488,10 @@ int main(int argc, char* argv[])
             log("SDL_CreateTexture failed: %s", SDL_GetError());
             exit(-1);
         }
+        /*add nearest and blendmode none with SDL3*/
+        SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
+        SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_NONE);
+
         frameBuffer = (unsigned int*)malloc(framePitch * frameHeight);
         if (!frameBuffer) {
             log("No memory");
@@ -798,6 +802,10 @@ int main(int argc, char* argv[])
             SDL_SetRenderTarget(renderer, nullptr);
             /*disable old way from SDL2
             SDL_RenderCopy(renderer, texture, nullptr, nullptr);*/
+            /*Clean with black color to avoid vertical artifact in borders*/
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+            SDL_RenderClear(renderer);
+
             SDL_RenderTexture(renderer, texture, nullptr, nullptr);
             SDL_RenderPresent(renderer);
         } else {
